@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  gender      String
+  birthday    DateTime
+  password    String
+  address     String?
+  email       Email[]
+  experience  Experience[]
+  friendGroup FriendGroup[]
+  FriendList  FriendList[]
+  log         Log[]
+  reply       Reply[]
+  Share       Share[]
+
+  @@map("user")
+}
+
+model Email {
+  id     Int     @id @default(autoincrement())
+  email  String  @unique
+  userId Int     @map("user_id")
+  isMain Boolean @default(false) @map("is_main")
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "email_user_id_fkey")
+  @@map("email")
+}
+
+model Experience {
+  id        Int      @id @default(autoincrement())
+  type      String
+  rank      String?
+  address   String
+  position  String
+  startTime DateTime @map("start_time")
+  endTime   DateTime @map("end_time")
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "experience_user_id_fkey")
+  @@map("experience")
+}
+
+model FriendList {
+  id          Int           @id @default(autoincrement())
+  name        String        @default("好友")
+  isGroup     Boolean       @default(false) @map("is_group")
+  userId      Int           @map("user_id")
+  friendGroup FriendGroup[]
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "friend_list_user_id_fkey")
+  @@map("friend_list")
+}
+
+model FriendGroup {
+  id         Int        @id @default(autoincrement())
+  listId     Int        @map("list_id")
+  friendId   Int        @map("friend_id")
+  friend     User       @relation(fields: [friendId], references: [id], onDelete: Cascade)
+  friendList FriendList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  @@index([friendId], map: "friend_group_friend_id_fkey")
+  @@index([listId], map: "friend_group_list_id_fkey")
+  @@map("friend_group")
+}
+
+model Log {
+  id         Int       @id @default(autoincrement())
+  content    String    @db.MediumText
+  canReply   Boolean   @default(false) @map("can_reply")
+  canShare   Boolean   @default(false) @map("can_share")
+  userId     Int       @map("user_id")
+  updateTime DateTime? @map("update_time") @db.DateTime(0)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reply      Reply[]
+  Share      Share[]
+
+  @@index([userId], map: "log_user_id_fkey")
+  @@map("log")
+}
+
+model Reply {
+  id          Int       @id @default(autoincrement())
+  type        String
+  content     String    @db.MediumText
+  userId      Int
+  logId       Int?      @map("log_id")
+  replyId     Int?      @map("reply_id")
+  updateTime  DateTime? @map("update_time") @db.DateTime(0)
+  canReply    Boolean   @default(false) @map("can_reply")
+  log         Log?      @relation(fields: [logId], references: [id], onDelete: Cascade, map: "Reply_log_id_fkey")
+  reply       Reply?    @relation("replyToreply", fields: [replyId], references: [id], onDelete: Cascade, map: "Reply_reply_id_fkey")
+  other_reply Reply[]   @relation("replyToreply")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Reply_user_id_fkey")
+
+  @@index([logId], map: "Reply_log_id_fkey")
+  @@index([replyId], map: "Reply_reply_id_fkey")
+  @@index([userId], map: "Reply_user_id_fkey")
+  @@map("reply")
+}
+
+model Share {
+  id         Int       @id @default(autoincrement())
+  content    String    @db.MediumText
+  createTime DateTime? @map("create_time") @db.DateTime(0)
+  updateTime DateTime? @map("update_time") @db.DateTime(0)
+  logId      Int       @map("log_id")
+  userId     Int       @map("user_id")
+  log        Log       @relation(fields: [logId], references: [id], onDelete: Cascade, map: "Share_log_id_fkey")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Share_user_id_fkey")
+
+  @@index([logId], map: "Share_log_id_fkey")
+  @@index([userId], map: "Share_user_id_fkey")
+  @@map("share")
+}
