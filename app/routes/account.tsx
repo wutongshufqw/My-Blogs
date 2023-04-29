@@ -10,7 +10,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Account() {
   return (
-    <div className='hero bg-base-200 overflow-auto'>
+    <div className='fixed top-16 bottom-0 hero bg-base-200 overflow-auto'>
       <div className='hero-content flex-col lg:flex-row-reverse'>
         <div className='text-center lg:text-left'>
           <h1 className='text-5xl font-bold'>Welcome To Blog System !</h1>

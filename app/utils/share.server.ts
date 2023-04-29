@@ -1,4 +1,4 @@
-import { ShareForm } from '~/utils/type.server'
+import type { ShareForm } from '~/utils/type.server'
 import { prisma } from '~/utils/prisma.erver'
 
 export class ShareServer {

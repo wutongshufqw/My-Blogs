@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { RegisterForm } from '~/utils/type.server'
+import type { RegisterForm } from '~/utils/type.server'
 import { prisma } from '~/utils/prisma.erver'
 
 export class UserServer {
@@ -87,7 +87,8 @@ export class UserServer {
       where: {
         id: {
           notIn: ids
-        }
+        },
+        userId: id
       }
     }))
     email.forEach((e: any) => {
@@ -174,7 +175,8 @@ export class UserServer {
       where: {
         id: {
           notIn: ids
-        }
+        },
+        userId: id
       }
     }))
     study.forEach((e: any) => {
