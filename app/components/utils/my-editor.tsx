@@ -38,7 +38,7 @@ export function MyEditor({
         readonly: readonly
       }}
       onEditorChange={onChange}
-      apiKey='2rx58t0nbsohskk1jlyxyvd37y64vqf989hyyqxtxj7q1h7b'
+      apiKey=''
     />
   )
 }
